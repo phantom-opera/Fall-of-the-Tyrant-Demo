@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyController : MonoBehaviour
+public class EnemyController : MonoBehaviour //Placeholder script for Enemy functionality
 {
 	[SerializeField] FloatingHealthBar healthBar;
 	[SerializeField] float health = 75;
@@ -23,13 +23,13 @@ public class EnemyController : MonoBehaviour
 
 	void Update()
     {
-        if(target != null)
+        if(target != null) //Moves the Enemy towards the Player if they are set as a target
 		{
 				float step = speed * Time.deltaTime;
 				transform.position = Vector2.MoveTowards(transform.position, target.position, step);
 		}
 
-		if(target == null)
+		if(target == null) //Moves the Enemy back to its starting position whenever the Player leaves the Enemy's detection radius.
 		{
 			float step = speed * Time.deltaTime;
 			transform.position = Vector2.MoveTowards(transform.position, originPoint.position, step);
@@ -48,7 +48,7 @@ public class EnemyController : MonoBehaviour
 	}
 
 
-	private void OnCollisionStay2D(Collision2D collision)
+	private void OnCollisionStay2D(Collision2D collision) //Damages Player on collision.
 	{
 		if (collision.gameObject.tag == "Player")
 		{
@@ -66,7 +66,7 @@ public class EnemyController : MonoBehaviour
 		}
 	}
 
-	private void OnTriggerEnter2D(Collider2D collision)
+	private void OnTriggerEnter2D(Collider2D collision) //Assigns the Player as a target when entering the Enemy's detection radius.
 	{
 		if(collision.gameObject.tag == "Player")
 		{
@@ -74,7 +74,7 @@ public class EnemyController : MonoBehaviour
 		}
 	}
 
-	private void OnTriggerExit2D(Collider2D collision)
+	private void OnTriggerExit2D(Collider2D collision) //Deassigns the Player when they leave the detection radius
 	{
 		if (collision.gameObject.tag == "Player")
 		{

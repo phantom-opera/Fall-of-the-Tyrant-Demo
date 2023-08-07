@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterController : MonoBehaviour
+public class CharacterController : MonoBehaviour //Placeholder Script for Player functionality
 {
+
+	[SerializeField] bool isInvincible;
 
 	public float health = 100;
 	public float maxHealth = 100;
@@ -15,9 +18,9 @@ public class CharacterController : MonoBehaviour
 	private const float staminaTimeToRegen = 3.0f;
 
 	public bool canMove = true;
-	public bool isRunning = false;
-	public float moveSpeed;
-	public float runSpeed;
+	private bool isRunning = false;
+	private float moveSpeed = 5f;
+	private float runSpeed = 10f;
 	public Rigidbody2D rb;
 
 	private bool canDash = true;
@@ -41,13 +44,13 @@ public class CharacterController : MonoBehaviour
 
 	void Update()
     {
-		if (isDashing)
+		if (isDashing) //Resets the stamina regen timer after dashing.
 		{
 			staminaRegenTimer = 0.0f;
 			return;
 		}
 
-		if (canMove)
+		if (canMove) //Allows the player to move when set to true.
 		{
 			moveInput.x = Input.GetAxisRaw("Horizontal");
 			moveInput.y = Input.GetAxisRaw("Vertical");
@@ -56,7 +59,7 @@ public class CharacterController : MonoBehaviour
 			rb.velocity = moveInput * moveSpeed;
 		}
 
-		if (Input.GetKeyDown(KeyCode.RightShift))
+		if (Input.GetKeyDown(KeyCode.RightShift)) // Character runs when Right Shift is pressed
 		{
 			if (!isRunning)
 			{
@@ -75,7 +78,7 @@ public class CharacterController : MonoBehaviour
 			}
 		}
 
-		if (Input.GetMouseButtonDown(0))
+		if (Input.GetMouseButtonDown(0)) //Attack button
 		{
 			weaponRotation.Attack();
 			stamina -= 10;
@@ -83,7 +86,7 @@ public class CharacterController : MonoBehaviour
 			staminaRegenTimer = 0.0f;
 		}
 
-		if (isRunning)
+		if (isRunning) //Player will move faster when set to true.
 		{
 			stamina -= 25 * Time.deltaTime;
 
@@ -94,13 +97,14 @@ public class CharacterController : MonoBehaviour
 			}
 		}
 
-		if (Input.GetKeyDown(KeyCode.Space) && canDash && stamina > 0)
+		if (Input.GetKeyDown(KeyCode.Space) && canDash && stamina > 0) //Dash Button
 		{
 			stamina -= 25;
 			StartCoroutine(Dash());
+			becomeInvincible();
 		}
 
-		if(stamina < maxStamina)
+		if(stamina < maxStamina) //Regenerates stamina to full whenever it is not capped.
 		{
 			if (staminaRegenTimer >= staminaTimeToRegen)
 			{
@@ -114,8 +118,21 @@ public class CharacterController : MonoBehaviour
 		}
 	}
 
+	private void becomeInvincible()
+	{
+		if (!isInvincible)
+		{
+			StartCoroutine(Invincible());
+		}
+	}
+
 	public void TakeDamage(float mod)
 	{
+		if (isInvincible)
+		{
+			return;
+		}
+
 		health += mod;
 
 		if(health <= 0f)
@@ -136,5 +153,16 @@ public class CharacterController : MonoBehaviour
 		isDashing = false;
 		yield return new WaitForSeconds(dashingCooldown);
 		canDash = true;
+	}
+
+	private IEnumerator Invincible() //Invincibility frames
+	{
+		isInvincible = true;
+		Debug.Log("Player turned invincible!");
+
+		yield return new WaitForSeconds(0.3f);
+
+		isInvincible = false;
+		Debug.Log("Player is no longer invincible!");
 	}
 }
