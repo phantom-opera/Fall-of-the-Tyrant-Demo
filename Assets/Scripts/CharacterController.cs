@@ -59,7 +59,7 @@ public class CharacterController : MonoBehaviour //Placeholder Script for Player
 			rb.velocity = moveInput * moveSpeed;
 		}
 
-		if (Input.GetKeyDown(KeyCode.RightShift)) // Character runs when Right Shift is pressed
+		if (Input.GetKeyDown(KeyCode.LeftShift)) // Character runs when Right Shift is pressed
 		{
 			if (!isRunning)
 			{
