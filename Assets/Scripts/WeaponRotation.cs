@@ -58,6 +58,7 @@ public class WeaponRotation : MonoBehaviour
 		characterController.rb.velocity = Vector3.zero;
 		isAttacking = true;
 		attackDisabled = true;
+		characterController.stamina -= 10;
 
 		StartCoroutine(DelayAttack());
 	}

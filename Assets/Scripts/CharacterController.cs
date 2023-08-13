@@ -18,7 +18,7 @@ public class CharacterController : MonoBehaviour //Placeholder Script for Player
 	private const float staminaTimeToRegen = 3.0f;
 
 	public bool canMove = true;
-	private bool isRunning = false;
+	[SerializeField] bool isRunning = false;
 	private float moveSpeed = 5f;
 	private float runSpeed = 10f;
 	public Rigidbody2D rb;
@@ -59,45 +59,41 @@ public class CharacterController : MonoBehaviour //Placeholder Script for Player
 			rb.velocity = moveInput * moveSpeed;
 		}
 
-		if (Input.GetKeyDown(KeyCode.LeftShift)) // Character runs when Right Shift is pressed
+		if (Input.GetKey(KeyCode.LeftShift) && rb.velocity != Vector2.zero) // Character runs while left shift is held
 		{
 			if (!isRunning)
 			{
-				if(stamina != 0)
-				{
+				
 					isRunning = true;
 					moveSpeed = runSpeed;
-					staminaRegenTimer = 0.0f;
-				}
-			}
-
-			else
-			{
-				isRunning = false;
-				moveSpeed = 5f;
 			}
 		}
 
-		if (Input.GetMouseButtonDown(0)) //Attack button
+		if (Input.GetKeyUp(KeyCode.LeftShift)) // Character stops running when Left Shift is no longer being held
+		{
+			isRunning = false;
+			moveSpeed = 5f;
+		}
+
+		if (Input.GetMouseButtonDown(0) && stamina >= 10) //Attack button
 		{
 			weaponRotation.Attack();
-			stamina -= 10;
-
 			staminaRegenTimer = 0.0f;
 		}
 
 		if (isRunning) //Player will move faster when set to true.
 		{
 			stamina -= 25 * Time.deltaTime;
+			staminaRegenTimer = 0.0f;
 
-			if (stamina <= 0)
+			if (stamina <= 0 || rb.velocity == Vector2.zero)
 			{
 				isRunning = false;
 				moveSpeed = 5f;
 			}
 		}
 
-		if (Input.GetKeyDown(KeyCode.Space) && canDash && stamina > 0) //Dash Button
+		if (Input.GetKeyDown(KeyCode.Space) && canDash && stamina >= 25) //Dash Button
 		{
 			stamina -= 25;
 			StartCoroutine(Dash());
